@@ -78,10 +78,13 @@ function App() {
   const [popular, setPopular] = useState<Resonse['results']>([])
   const [filtered, setFiltered] = useState<Resonse['results']>([])
   const [activeGenre, setActiveGenre] = useState(0)
+  const [error, setError] = useState('')
 
+  const API_KEY =
+    import.meta.env.VITE_API_KEY || '907960292d4625afadb2f77f2174e557'
   const fetchPopular = async () => {
     const data = await fetch(
-      'https://api.themoviedb.org/3/movie/popular?api_key=907960292d4625afadb2f77f2174e557&language=en-US&page=1'
+      `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=1`
     )
     const moveies = await data.json()
     setPopular(moveies.results)
@@ -89,7 +92,12 @@ function App() {
   }
 
   useEffect(() => {
-    fetchPopular()
+    if (API_KEY) {
+      fetchPopular()
+      setError('')
+    } else {
+      setError('You not have api_key!!')
+    }
   }, [])
 
   return (
@@ -100,12 +108,15 @@ function App() {
         activeGenre={activeGenre}
         setActiveGenre={setActiveGenre}
       />
-      <AnimatePresence>
-        <motion.div className="popular-movies">
-          {filtered &&
-            filtered.map((movie) => <Movie key={movie.id} movie={movie} />)}
-        </motion.div>
-      </AnimatePresence>
+      {error && <p className="error">{error}</p>}
+      {!error && (
+        <AnimatePresence>
+          <motion.div className="popular-movies">
+            {filtered &&
+              filtered.map((movie) => <Movie key={movie.id} movie={movie} />)}
+          </motion.div>
+        </AnimatePresence>
+      )}
     </div>
   )
 }

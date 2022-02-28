@@ -38,3 +38,8 @@ button.active {
   background: rgb(65, 98, 168);
   color: #fff;
 }
+
+.error {
+  color: red;
+  font-weight: 700;
+}
